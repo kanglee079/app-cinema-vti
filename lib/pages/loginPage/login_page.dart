@@ -9,6 +9,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController? usernameController = TextEditingController();
     TextEditingController? passwordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
     return TouchOutsideToDismissKeyboard(
       child: Scaffold(
         backgroundColor: const Color(0xff181f2b),
@@ -18,48 +19,60 @@ class LoginPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Image.asset("assets/image/AppIcon.png"),
-              Column(
-                children: [
-                  TextFormCustom(
-                    hintText: "Username",
-                    controller: usernameController,
-                  ),
-                  const SizedBox(height: 25),
-                  TextFormCustom(
-                    hintText: "Password",
-                    controller: passwordController,
-                    iconPrefix: Icons.lock,
-                    isPassword: true,
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        style:
-                            const ButtonStyle(alignment: Alignment.centerRight),
-                        onPressed: () {},
-                        child: const Text(
-                          "Forgot password?",
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.orangeAccent),
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    TextFormCustom(
+                      hintText: "Username",
+                      errorCheck: "email",
+                      controller: usernameController,
+                    ),
+                    const SizedBox(height: 25),
+                    TextFormCustom(
+                      hintText: "Password",
+                      controller: passwordController,
+                      iconPrefix: Icons.lock,
+                      isPassword: true,
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          style: const ButtonStyle(
+                              alignment: Alignment.centerRight),
+                          onPressed: () {},
+                          child: const Text(
+                            "Forgot password?",
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.orangeAccent),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  ButtonCustom(
-                    onTap: () {},
-                    textButton: 'Login',
-                    textStyle: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold),
-                    backgroundColor: const Color(0xffff7238),
-                  ),
-                ],
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    ButtonCustom(
+                      onTap: () {
+                        print(usernameController.text);
+                        print(passwordController.text);
+                        if (formKey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Processing Data')),
+                          );
+                        }
+                      },
+                      textButton: 'Login',
+                      textStyle: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
+                      backgroundColor: const Color(0xffff7238),
+                    ),
+                  ],
+                ),
               ),
               Column(
                 children: [
