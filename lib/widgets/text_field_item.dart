@@ -54,11 +54,10 @@ class _TextFormCustomState extends State<TextFormCustom> {
             : null,
         filled: true,
         fillColor: const Color(0xFF1E1C24),
-        // enabledBorder: const OutlineInputBorder(
-        //   // borderRadius: BorderRadius.all(Radius.circular(4.0)),
-        //   borderSide: BorderSide(color: Colors.orangeAccent, width: 2),
-        // ),
-        focusedBorder: const UnderlineInputBorder(
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.orangeAccent, width: 1),
+        ),
+        focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.orangeAccent),
         ),
         errorBorder: const OutlineInputBorder(

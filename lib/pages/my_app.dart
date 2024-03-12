@@ -8,6 +8,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: const LoginPage(),
       theme: ThemeData(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
