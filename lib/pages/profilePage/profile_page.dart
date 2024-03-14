@@ -13,6 +13,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String dropdownValue = "Ho Chi Minh City";
   @override
   Widget build(BuildContext context) {
     const List<String> list = <String>[
@@ -22,8 +23,6 @@ class _ProfilePageState extends State<ProfilePage> {
       "Can Tho",
       "Hue"
     ];
-
-    String dropdownValue = list.first;
 
     return Scaffold(
       backgroundColor: ConfigColors().primaryColor,
@@ -133,6 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     isDeco: false,
                     title: "City",
                     child: Container(
+                      height: 40,
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -141,27 +141,26 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: Colors.white.withOpacity(0.2),
                         ),
                       ),
-                      child: DropdownButton<String>(
-                        value: dropdownValue,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        // elevation: 16,
-                        style: const TextStyle(color: Colors.white),
-                        dropdownColor: ConfigColors().primaryColor,
-                        underline: Container(
-                          height: 0,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: dropdownValue,
+                          icon: const Icon(Icons.arrow_drop_down,
+                              color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
+                          dropdownColor: ConfigColors().primaryColor,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownValue = newValue!;
+                            });
+                          },
+                          items: list
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
                         ),
-                        onChanged: (String? value) {
-                          setState(() {
-                            dropdownValue = value!;
-                          });
-                        },
-                        items:
-                            list.map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
                       ),
                     ),
                   ),
