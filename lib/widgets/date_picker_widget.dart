@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class DatePickerWidget extends StatefulWidget {
-  const DatePickerWidget({super.key});
+  final Function(DateTime) onDateChanged;
+  const DatePickerWidget({
+    super.key,
+    required this.onDateChanged,
+  });
 
   @override
   _DatePickerWidgetState createState() => _DatePickerWidgetState();
@@ -21,23 +25,34 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
       setState(() {
         selectedDate = picked;
       });
+      widget.onDateChanged(picked);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: GestureDetector(
-        onTap: () => _selectDate(context),
-        child: Row(
-          children: [
-            Text(
-              '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-              style: const TextStyle(fontSize: 15, color: Colors.white),
+    return GestureDetector(
+      onTap: () => _selectDate(context),
+      child: IntrinsicWidth(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              width: 1,
+              color: Colors.white.withOpacity(0.2),
             ),
-            const SizedBox(width: 15),
-            const Icon(Icons.date_range, color: Colors.white)
-          ],
+          ),
+          child: Row(
+            children: [
+              Text(
+                '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                style: const TextStyle(fontSize: 15, color: Colors.white),
+              ),
+              const SizedBox(width: 15),
+              const Icon(Icons.date_range, color: Colors.white)
+            ],
+          ),
         ),
       ),
     );

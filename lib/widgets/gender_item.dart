@@ -7,7 +7,11 @@ enum Gender {
 }
 
 class GenderItem extends StatefulWidget {
-  const GenderItem({super.key});
+  final Function(Gender) onGenderChanged;
+  const GenderItem({
+    super.key,
+    required this.onGenderChanged,
+  });
 
   @override
   State<GenderItem> createState() => _GenderItemState();
@@ -44,6 +48,7 @@ class _GenderItemState extends State<GenderItem> {
         setState(() {
           selectedGender = gender;
         });
+        widget.onGenderChanged(gender);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -93,6 +98,7 @@ class _GenderItemState extends State<GenderItem> {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         _buildGenderOption(Gender.Male, "Male"),
         const SizedBox(width: 2),
