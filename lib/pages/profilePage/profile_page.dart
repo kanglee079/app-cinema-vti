@@ -1,5 +1,6 @@
 import 'package:app_cinema/apps/config/conf_colors.dart';
 import 'package:app_cinema/widgets/date_picker_widget.dart';
+import 'package:app_cinema/widgets/language_toggle_item.dart';
 import 'package:app_cinema/widgets/touch_dismiss_keyboard_item.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool isReceiveNotification = false;
   DateTime _selectedDate = DateTime.now();
   Gender _selectedGender = Gender.Male;
   String dropdownValue = "Ho Chi Minh City";
@@ -116,8 +118,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Text(
                     "Information",
                     style: TextStyle(
-                        color: ConfigColors().iconColor,
-                        fontWeight: FontWeight.w500),
+                      color: ConfigColors().iconColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -214,6 +218,44 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Settings",
+                    style: TextStyle(
+                      color: ConfigColors().iconColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                Column(
+                  children: [
+                    const InfoRow(
+                      title: "Language",
+                      isDeco: false,
+                      child: LanguageToggle(),
+                    ),
+                    InfoRow(
+                      title: "Receive notification",
+                      isDeco: false,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Switch(
+                          value: isReceiveNotification,
+                          activeColor: Colors.orange,
+                          onChanged: (bool value) {
+                            setState(() {
+                              isReceiveNotification = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 50),
               ],
             ),
           ),
