@@ -23,6 +23,10 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
+  late ThemeData _themeData;
+  TextTheme get _textTheme => _themeData.textTheme;
+  ColorScheme get _colorScheme => _themeData.colorScheme;
+
   void _handleDateChanged(DateTime date) {
     setState(() {
       _selectedDate = date;
@@ -58,6 +62,8 @@ class _ProfilePageState extends State<ProfilePage> {
       print("City: $dropdownValue");
     }
 
+    _themeData = Theme.of(context);
+
     return TouchOutsideToDismissKeyboard(
       child: Scaffold(
         backgroundColor: ConfigColors().primaryColor,
@@ -68,16 +74,13 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () {},
             icon: Icon(
               Icons.arrow_back_ios,
-              color: ConfigColors().iconColor,
+              color: _themeData.colorScheme.primaryContainer,
             ),
           ),
-          title: const Center(
+          title: Center(
             child: Text(
               'Profile',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+              style: _textTheme.titleLarge,
             ),
           ),
           actions: [
@@ -85,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {},
               icon: Icon(
                 Icons.logout,
-                color: ConfigColors().iconColor,
+                color: _themeData.colorScheme.primaryContainer,
               ),
             ),
             const SizedBox(width: 10),
@@ -105,22 +108,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   backgroundImage: AssetImage('assets/image/AppIcon.png'),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Wayne Jackson',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: _textTheme.titleLarge,
                 ),
                 const SizedBox(height: 30),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Information",
-                    style: TextStyle(
-                      color: ConfigColors().iconColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 20,
+                    style: _textTheme.titleMedium?.copyWith(
+                      color: _colorScheme.primaryContainer,
                     ),
                   ),
                 ),
@@ -130,10 +128,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     InfoRow(
                       title: "Fullname",
                       controller: fullNameController,
+                      titleStyle: _textTheme.bodyMedium,
                     ),
                     InfoRow(
                       isDeco: false,
                       title: "Date of birth",
+                      titleStyle: _textTheme.bodyMedium,
                       child: Align(
                         alignment: Alignment.centerRight,
                         child:
@@ -142,21 +142,25 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     InfoRow(
                       title: "Phone number",
+                      titleStyle: _textTheme.bodyMedium,
                       isPhone: true,
                       controller: phoneNumberController,
                     ),
                     InfoRow(
                       title: "Email",
                       controller: emailController,
+                      titleStyle: _textTheme.bodyMedium,
                     ),
                     InfoRow(
                       isDeco: false,
                       title: "Gender",
+                      titleStyle: _textTheme.bodyMedium,
                       child: GenderItem(onGenderChanged: _handleGenderChanged),
                     ),
                     InfoRow(
                       isDeco: false,
                       title: "City",
+                      titleStyle: _textTheme.bodyMedium,
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Container(
@@ -205,13 +209,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           borderRadius: BorderRadius.circular(8),
                           color: Colors.orange,
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
                             "SAVE",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
+                            style: _textTheme.titleMedium,
                           ),
                         ),
                       ),
@@ -223,22 +224,22 @@ class _ProfilePageState extends State<ProfilePage> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Settings",
-                    style: TextStyle(
-                      color: ConfigColors().iconColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 20,
+                    style: _textTheme.titleMedium?.copyWith(
+                      color: _colorScheme.primaryContainer,
                     ),
                   ),
                 ),
                 Column(
                   children: [
-                    const InfoRow(
+                    InfoRow(
                       title: "Language",
+                      titleStyle: _textTheme.bodyMedium,
                       isDeco: false,
-                      child: LanguageToggle(),
+                      child: const LanguageToggle(),
                     ),
                     InfoRow(
                       title: "Receive notification",
+                      titleStyle: _textTheme.bodyMedium,
                       isDeco: false,
                       child: Align(
                         alignment: Alignment.centerRight,

@@ -29,7 +29,7 @@ class InfoRow extends StatelessWidget {
             child: Text(
               title,
               style: titleStyle ??
-                  const TextStyle(fontSize: 15, color: Colors.white),
+                  const TextStyle(fontSize: 14, color: Colors.white),
             ),
           ),
           const SizedBox(width: 20),
