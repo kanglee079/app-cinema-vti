@@ -13,6 +13,7 @@ class _AboutPageState extends State<AboutPage> {
   late ThemeData _themeData;
   TextTheme get _textTheme => _themeData.textTheme;
   ColorScheme get _colorScheme => _themeData.colorScheme;
+
   @override
   Widget build(BuildContext context) {
     _themeData = Theme.of(context);

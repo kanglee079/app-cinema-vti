@@ -207,7 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 40,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: Colors.orange,
+                          color: _colorScheme.primary,
                         ),
                         child: Center(
                           child: Text(

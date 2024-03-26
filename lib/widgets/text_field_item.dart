@@ -22,6 +22,9 @@ class TextFormCustom extends StatefulWidget {
 
 class _TextFormCustomState extends State<TextFormCustom> {
   late bool _isObscured;
+  late ThemeData _themeData;
+  TextTheme get _textTheme => _themeData.textTheme;
+  ColorScheme get _colorScheme => _themeData.colorScheme;
 
   @override
   void initState() {
@@ -31,14 +34,15 @@ class _TextFormCustomState extends State<TextFormCustom> {
 
   @override
   Widget build(BuildContext context) {
+    _themeData = Theme.of(context);
     return TextFormField(
-      style: const TextStyle(color: Colors.orangeAccent),
+      style: TextStyle(color: _colorScheme.primary),
       controller: widget.controller,
       obscureText: _isObscured,
       decoration: InputDecoration(
         labelText: widget.hintText,
         labelStyle: const TextStyle(color: Colors.white),
-        prefixIcon: Icon(widget.iconPrefix, color: Colors.orangeAccent),
+        prefixIcon: Icon(widget.iconPrefix, color: _colorScheme.primary),
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(
@@ -54,8 +58,8 @@ class _TextFormCustomState extends State<TextFormCustom> {
             : null,
         filled: true,
         fillColor: const Color(0xFF1E1C24),
-        enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.orangeAccent, width: 1),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: _colorScheme.primary, width: 1),
         ),
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.orangeAccent),

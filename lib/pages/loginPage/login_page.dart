@@ -4,10 +4,30 @@ import 'package:app_cinema/widgets/text_field_item.dart';
 import 'package:app_cinema/widgets/touch_dismiss_keyboard_item.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
+import '../../core/utils/localiztions.dart';
+
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  late ThemeData _themeData;
+  TextTheme get _textTheme => _themeData.textTheme;
+  ColorScheme get _colorScheme => _themeData.colorScheme;
+
+  @override
+  void initState() {
+    print("Đã gọi init");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    _themeData = Theme.of(context);
+
     TextEditingController? usernameController = TextEditingController();
     TextEditingController? passwordController = TextEditingController();
     final formKey = GlobalKey<FormState>();
@@ -27,7 +47,7 @@ class LoginPage extends StatelessWidget {
                     child: Column(
                       children: [
                         TextFormCustom(
-                          hintText: "Username",
+                          hintText: translate(context).username,
                           errorCheck: "email",
                           controller: usernameController,
                         ),
@@ -45,12 +65,13 @@ class LoginPage extends StatelessWidget {
                               style: const ButtonStyle(
                                   alignment: Alignment.centerRight),
                               onPressed: () {},
-                              child: const Text(
+                              child: Text(
                                 "Forgot password?",
                                 style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.orangeAccent),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: _colorScheme.primary,
+                                ),
                               ),
                             ),
                           ],
@@ -71,7 +92,7 @@ class LoginPage extends StatelessWidget {
                               color: Colors.white,
                               fontSize: 24,
                               fontWeight: FontWeight.bold),
-                          backgroundColor: const Color(0xffff7238),
+                          backgroundColor: _colorScheme.primary,
                         ),
                       ],
                     ),
