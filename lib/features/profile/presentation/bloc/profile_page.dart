@@ -4,8 +4,8 @@ import 'package:app_cinema/widgets/language_toggle_item.dart';
 import 'package:app_cinema/widgets/touch_dismiss_keyboard_item.dart';
 import 'package:flutter/material.dart';
 
-import '../../widgets/gender_item.dart';
-import '../../widgets/infor_item.dart';
+import '../../../../widgets/gender_item.dart';
+import '../../../../widgets/infor_item.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

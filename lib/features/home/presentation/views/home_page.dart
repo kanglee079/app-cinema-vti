@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
               Center(
                 child: AnimatedSmoothIndicator(
                   activeIndex: _currentIndex,
-                  count: 6,
+                  count: 5,
                   effect: ExpandingDotsEffect(
                     dotWidth: 15,
                     dotHeight: 15,
@@ -151,7 +151,7 @@ class _HomePageState extends State<HomePage> {
               GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: 20,
+                itemCount: 10,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 9 / 16,

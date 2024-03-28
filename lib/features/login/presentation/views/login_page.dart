@@ -4,7 +4,7 @@ import 'package:app_cinema/widgets/text_field_item.dart';
 import 'package:app_cinema/widgets/touch_dismiss_keyboard_item.dart';
 import 'package:flutter/material.dart';
 
-import '../../core/utils/localiztions.dart';
+import '../../../../core/utils/localiztions.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/item_tile_about_page.dart';
+import '../../../../widgets/item_tile_about_page.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
