@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "161659151125",
+    "project_id": "xikang-cinema",
+    "storage_bucket": "xikang-cinema.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:161659151125:android:f1a3b7ed91adb295ffff1c",
+        "android_client_info": {
+          "package_name": "com.xikang.appcinema"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfsdqZx8EVZtzVSsKLgZp5T8wo22-exlM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

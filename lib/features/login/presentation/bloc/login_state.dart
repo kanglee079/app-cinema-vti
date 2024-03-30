@@ -4,7 +4,9 @@ abstract class LoginState {}
 class InitialLoginState extends LoginState {}
 
 class SuccessLoginState extends LoginState {
-  String? message;
+  final String? message;
+
+  SuccessLoginState({this.message});
 }
 
 class FaildLoginState extends LoginState {

@@ -1,12 +1,14 @@
 abstract class LoginEvent {}
 
 class LoginWithUsernamePasswordEvent extends LoginEvent {
-  String? username;
-  String? password;
+  final String? username;
+  final String? password;
 
   LoginWithUsernamePasswordEvent({this.username, this.password});
 }
 
 class ThirdPartyLoginEvent extends LoginEvent {
-  String? provider;
+  final String provider;
+
+  ThirdPartyLoginEvent({required this.provider});
 }
