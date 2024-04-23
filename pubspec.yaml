@@ -45,17 +45,31 @@ dependencies:
   rename: ^3.0.2
   firebase_core: ^2.27.2
   firebase_auth: ^4.18.0
+  flutter_easyloading: ^3.0.5
+  giffy_dialog: ^2.1.0
+  google_sign_in: ^6.2.1
+  http: ^1.2.1
+  json_annotation: ^4.8.1
+  dio: ^5.4.3+1
+  retrofit: ^4.1.0
+  date_format: ^2.0.7
+  flutter_svg: ^2.0.10+1
+  youtube_player_flutter: ^8.1.2
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  retrofit_generator: ^8.1.0
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+  build_runner: ^2.4.9
+  json_serializable: ^6.7.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

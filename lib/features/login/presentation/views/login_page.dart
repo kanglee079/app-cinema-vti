@@ -4,6 +4,7 @@ import 'package:app_cinema/widgets/text_field_item.dart';
 import 'package:app_cinema/widgets/touch_dismiss_keyboard_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../bloc/login_bloc.dart';
 import '../bloc/login_event.dart';
@@ -29,32 +30,36 @@ class _LoginPageState extends State<LoginPage> {
 
     _blocLogin = BlocProvider.of<LoginBloc>(context);
 
-    return BlocProvider<LoginBloc>(
-      create: (context) => LoginBloc(),
-      child: TouchOutsideToDismissKeyboard(
-        child: Scaffold(
-          backgroundColor: ConfigColors().primaryColor,
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-              child: SingleChildScrollView(
-                child: BlocConsumer<LoginBloc, LoginState>(
-                  listener: (context, state) {
-                    if (state is FaildLoginState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message!)));
-                    }
-                    if (state is SuccessLoginState) {
+    return TouchOutsideToDismissKeyboard(
+      child: Scaffold(
+        backgroundColor: ConfigColors().primaryColor,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+            child: SingleChildScrollView(
+              child: BlocConsumer<LoginBloc, LoginState>(
+                listener: (context, state) {
+                  if (state is LoadingLoginState) {
+                    EasyLoading.show(status: state.message);
+                  } else if (state is SuccessLoginState) {
+                    EasyLoading.showSuccess(state.message).then((value) {
                       Navigator.pushReplacementNamed(context, '/');
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is LoadingLoginState) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return buildLoginForm(context, themeData);
-                  },
-                ),
+                    });
+                  } else if (state is FailedLoginState) {
+                    EasyLoading.showError(state.message);
+                  }
+                },
+                builder: (context, state) {
+                  // if (state is LoadingLoginState) {
+                  //   return const Column(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       Center(child: CircularProgressIndicator()),
+                  //     ],
+                  //   );
+                  // }
+                  return buildLoginForm(context, themeData);
+                },
               ),
             ),
           ),
@@ -68,11 +73,13 @@ class _LoginPageState extends State<LoginPage> {
       key: formKey,
       child: Column(
         children: [
+          const SizedBox(height: 30),
           Image.asset("assets/image/AppIcon.png"),
           const SizedBox(height: 30),
           TextFormCustom(
             hintText: 'Username',
             controller: usernameController,
+            errorCheck: 'email',
           ),
           const SizedBox(height: 15),
           TextFormCustom(

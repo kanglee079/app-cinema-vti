@@ -1,25 +1,27 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 abstract class LoginState {}
 
 class InitialLoginState extends LoginState {}
 
 class SuccessLoginState extends LoginState {
-  final String? message;
+  final String message;
 
-  SuccessLoginState({this.message});
+  SuccessLoginState({required this.message});
 }
 
-class FaildLoginState extends LoginState {
-  String? message;
-  bool? isFaildUsername;
-  bool? isFaildPassword;
-  FaildLoginState({
-    this.message,
-    this.isFaildUsername,
-    this.isFaildPassword,
+class FailedLoginState extends LoginState {
+  final String message;
+  final bool isFailedUsername;
+  final bool isFailedPassword;
+
+  FailedLoginState({
+    required this.message,
+    this.isFailedUsername = false,
+    this.isFailedPassword = false,
   });
 }
 
 class LoadingLoginState extends LoginState {
-  String? message;
+  final String message;
+
+  LoadingLoginState({this.message = 'Loading...'});
 }

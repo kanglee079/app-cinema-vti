@@ -24,6 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController emailController = TextEditingController();
 
   late ThemeData _themeData;
+
   TextTheme get _textTheme => _themeData.textTheme;
   ColorScheme get _colorScheme => _themeData.colorScheme;
 
@@ -71,7 +72,9 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: ConfigColors().appBarColor,
           leading: IconButton(
             padding: const EdgeInsets.only(left: 15),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
             icon: Icon(
               Icons.arrow_back_ios,
               color: _themeData.colorScheme.primaryContainer,

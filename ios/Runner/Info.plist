@@ -51,5 +51,18 @@
 		<string>en</string>
 		<string>es</string>
 	</array>
+	<key>GIDClientID</key>
+	<string>161659151125-089rh2s6ddqgkrosbs11q2ka06pso9cj.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.googleusercontent.apps.161659151125-089rh2s6ddqgkrosbs11q2ka06pso9cj</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.161659151125-089rh2s6ddqgkrosbs11q2ka06pso9cj</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
