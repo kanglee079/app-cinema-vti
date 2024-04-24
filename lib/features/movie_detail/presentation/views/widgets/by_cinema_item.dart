@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../bloc/movie_detail_bloc.dart';
+import '../../bloc/movie_detail_event.dart';
 
 class ByCinemaSessionItem extends StatefulWidget {
   const ByCinemaSessionItem({
@@ -29,7 +33,9 @@ class _ByCinemaSessionItemState extends State<ByCinemaSessionItem> {
                 setState(() {
                   switchValue = value;
                 });
-                print('test $value');
+                BlocProvider.of<MovieDetailBloc>(context).add(
+                  SortMovieSessionsByCinemaEvent(isAscending: value),
+                );
               },
             ),
           ),

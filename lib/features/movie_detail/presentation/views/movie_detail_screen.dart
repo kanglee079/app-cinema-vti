@@ -16,7 +16,9 @@ class MovieDetailPage extends StatefulWidget {
   State<MovieDetailPage> createState() => _MovieDetailPageState();
 }
 
-class _MovieDetailPageState extends State<MovieDetailPage> {
+class _MovieDetailPageState extends State<MovieDetailPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   late ThemeData _themeData;
   TextTheme get _textTheme => _themeData.textTheme;
   ColorScheme get _colorScheme => _themeData.colorScheme;
@@ -24,8 +26,23 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(vsync: this, length: 2);
+    _tabController.addListener(_handleTabSelection);
     BlocProvider.of<MovieDetailBloc>(context)
         .add(GetMovieDetailEvent(movieId: widget.movieId));
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_handleTabSelection);
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,6 +68,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                 style: _textTheme.titleLarge,
               ),
               bottom: TabBar(
+                controller: _tabController,
                 indicatorSize: TabBarIndicatorSize.tab,
                 unselectedLabelColor: _themeData.colorScheme.primaryContainer,
                 labelStyle: _textTheme.titleMedium,
@@ -67,6 +85,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state.status == BlocStatusState.success) {
                   return TabBarView(
+                    controller: _tabController,
                     children: [
                       AboutTab(movieDetail: state.movieDetail),
                       SessionTab(movieId: widget.movieId),
@@ -91,33 +110,37 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   }
 
   Widget _buildBottomNavigationBar() {
-    return Container(
-      width: double.infinity,
-      height: 110,
-      decoration: BoxDecoration(
-        color: _colorScheme.surface,
-      ),
-      child: InkWell(
-        onTap: () {},
-        child: Padding(
-          padding: const EdgeInsets.all(21),
-          child: Container(
+    return _tabController.index == 0
+        ? Container(
             width: double.infinity,
+            height: 110,
             decoration: BoxDecoration(
-              color: _colorScheme.primary,
-              borderRadius: BorderRadius.circular(8),
+              color: _themeData.colorScheme.surface,
             ),
-            child: Center(
-              child: Text(
-                "Select session",
-                style: _textTheme.titleMedium!.copyWith(
-                  color: _colorScheme.onPrimary,
+            child: InkWell(
+              onTap: () {
+                _tabController.animateTo(1);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(21),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: _themeData.colorScheme.primary,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Select session",
+                      style: _themeData.textTheme.titleMedium!.copyWith(
+                        color: _themeData.colorScheme.onPrimary,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          )
+        : const SizedBox.shrink();
   }
 }

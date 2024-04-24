@@ -23,10 +23,15 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
-  late ThemeData _themeData;
+  @override
+  void dispose() {
+    fullNameController.dispose();
+    phoneNumberController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
 
-  TextTheme get _textTheme => _themeData.textTheme;
-  ColorScheme get _colorScheme => _themeData.colorScheme;
+  // late ThemeData _themeData;
 
   void _handleDateChanged(DateTime date) {
     setState(() {
@@ -40,30 +45,32 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  void saveProfile() {
+    DateTime selectedDate = DateTime.now();
+    String selectedGender = "Male";
+
+    print("Full Name: ${fullNameController.text}");
+    print("Phone Number: ${phoneNumberController.text}");
+    print("Email: ${emailController.text}");
+    print(
+        "Date of Birth: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}");
+    print("Gender: $selectedGender");
+    print("City: $dropdownValue");
+  }
+
+  final List<String> listCity = <String>[
+    "Ho Chi Minh City",
+    "Hanoi",
+    "Da Nang",
+    "Can Tho",
+    "Hue"
+  ];
+
   @override
   Widget build(BuildContext context) {
-    const List<String> list = <String>[
-      "Ho Chi Minh City",
-      "Hanoi",
-      "Da Nang",
-      "Can Tho",
-      "Hue"
-    ];
-
-    void saveProfile() {
-      DateTime selectedDate = DateTime.now();
-      String selectedGender = "Male";
-
-      print("Full Name: ${fullNameController.text}");
-      print("Phone Number: ${phoneNumberController.text}");
-      print("Email: ${emailController.text}");
-      print(
-          "Date of Birth: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}");
-      print("Gender: $selectedGender");
-      print("City: $dropdownValue");
-    }
-
-    _themeData = Theme.of(context);
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
+    final ColorScheme colorScheme = themeData.colorScheme;
 
     return TouchOutsideToDismissKeyboard(
       child: Scaffold(
@@ -77,13 +84,13 @@ class _ProfilePageState extends State<ProfilePage> {
             },
             icon: Icon(
               Icons.arrow_back_ios,
-              color: _themeData.colorScheme.primaryContainer,
+              color: themeData.colorScheme.primaryContainer,
             ),
           ),
           title: Center(
             child: Text(
               'Profile',
-              style: _textTheme.titleLarge,
+              style: textTheme.titleLarge,
             ),
           ),
           actions: [
@@ -91,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {},
               icon: Icon(
                 Icons.logout,
-                color: _themeData.colorScheme.primaryContainer,
+                color: themeData.colorScheme.primaryContainer,
               ),
             ),
             const SizedBox(width: 10),
@@ -113,15 +120,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 20),
                 Text(
                   'Wayne Jackson',
-                  style: _textTheme.titleLarge,
+                  style: textTheme.titleLarge,
                 ),
                 const SizedBox(height: 30),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Information",
-                    style: _textTheme.titleMedium?.copyWith(
-                      color: _colorScheme.primaryContainer,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: colorScheme.primaryContainer,
                     ),
                   ),
                 ),
@@ -131,12 +138,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     InfoRow(
                       title: "Fullname",
                       controller: fullNameController,
-                      titleStyle: _textTheme.bodyMedium,
+                      titleStyle: textTheme.bodyMedium,
                     ),
                     InfoRow(
                       isDeco: false,
                       title: "Date of birth",
-                      titleStyle: _textTheme.bodyMedium,
+                      titleStyle: textTheme.bodyMedium,
                       child: Align(
                         alignment: Alignment.centerRight,
                         child:
@@ -145,25 +152,25 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     InfoRow(
                       title: "Phone number",
-                      titleStyle: _textTheme.bodyMedium,
+                      titleStyle: textTheme.bodyMedium,
                       isPhone: true,
                       controller: phoneNumberController,
                     ),
                     InfoRow(
                       title: "Email",
                       controller: emailController,
-                      titleStyle: _textTheme.bodyMedium,
+                      titleStyle: textTheme.bodyMedium,
                     ),
                     InfoRow(
                       isDeco: false,
                       title: "Gender",
-                      titleStyle: _textTheme.bodyMedium,
+                      titleStyle: textTheme.bodyMedium,
                       child: GenderItem(onGenderChanged: _handleGenderChanged),
                     ),
                     InfoRow(
                       isDeco: false,
                       title: "City",
-                      titleStyle: _textTheme.bodyMedium,
+                      titleStyle: textTheme.bodyMedium,
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Container(
@@ -188,7 +195,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   dropdownValue = newValue!;
                                 });
                               },
-                              items: list.map<DropdownMenuItem<String>>(
+                              items: listCity.map<DropdownMenuItem<String>>(
                                   (String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
@@ -210,12 +217,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 40,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: _colorScheme.primary,
+                          color: colorScheme.primary,
                         ),
                         child: Center(
                           child: Text(
                             "SAVE",
-                            style: _textTheme.titleMedium,
+                            style: textTheme.titleMedium,
                           ),
                         ),
                       ),
@@ -227,8 +234,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Settings",
-                    style: _textTheme.titleMedium?.copyWith(
-                      color: _colorScheme.primaryContainer,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: colorScheme.primaryContainer,
                     ),
                   ),
                 ),
@@ -236,13 +243,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     InfoRow(
                       title: "Language",
-                      titleStyle: _textTheme.bodyMedium,
+                      titleStyle: textTheme.bodyMedium,
                       isDeco: false,
                       child: const LanguageToggle(),
                     ),
                     InfoRow(
                       title: "Receive notification",
-                      titleStyle: _textTheme.bodyMedium,
+                      titleStyle: textTheme.bodyMedium,
                       isDeco: false,
                       child: Align(
                         alignment: Alignment.centerRight,

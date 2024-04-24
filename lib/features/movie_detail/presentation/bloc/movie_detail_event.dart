@@ -16,3 +16,15 @@ class GetMovieSessionsEvent extends MovieDetailEvent {
     required this.sessionDate,
   });
 }
+
+class SortMovieSessionsByCinemaEvent extends MovieDetailEvent {
+  final bool isAscending;
+
+  SortMovieSessionsByCinemaEvent({required this.isAscending});
+}
+
+class SortMovieSessionsByTimeEvent extends MovieDetailEvent {
+  final bool isAscending;
+
+  SortMovieSessionsByTimeEvent({required this.isAscending});
+}

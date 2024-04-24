@@ -1,4 +1,5 @@
 import 'package:app_cinema/apps/config/conf_colors.dart';
+import 'package:app_cinema/features/auths/presentation/auth_route.dart';
 import 'package:app_cinema/widgets/button_item.dart';
 import 'package:app_cinema/widgets/text_field_item.dart';
 import 'package:app_cinema/widgets/touch_dismiss_keyboard_item.dart';
@@ -6,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-import '../bloc/login_bloc.dart';
-import '../bloc/login_event.dart';
-import '../bloc/login_state.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
+import '../bloc/auth_state.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,13 +23,13 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  late LoginBloc _blocLogin;
+  late AuthBloc _blocLogin;
 
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
 
-    _blocLogin = BlocProvider.of<LoginBloc>(context);
+    _blocLogin = BlocProvider.of<AuthBloc>(context);
 
     return TouchOutsideToDismissKeyboard(
       child: Scaffold(
@@ -37,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
             child: SingleChildScrollView(
-              child: BlocConsumer<LoginBloc, LoginState>(
+              child: BlocConsumer<AuthBloc, AuthState>(
                 listener: (context, state) {
                   if (state is LoadingLoginState) {
                     EasyLoading.show(status: state.message);
@@ -89,14 +90,27 @@ class _LoginPageState extends State<LoginPage> {
             isPassword: true,
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, AuthRoute.registerRouteName);
+                },
+                child: Text(
+                  "Register",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: themeData.colorScheme.primary,
+                  ),
+                ),
+              ),
               TextButton(
                 onPressed: () {},
                 child: Text(
                   "Forgot password?",
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 16,
                     fontWeight: FontWeight.w400,
                     color: themeData.colorScheme.primary,
                   ),

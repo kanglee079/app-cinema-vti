@@ -42,9 +42,20 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   }
 
   @override
-  Future<UserCredential?> registerWithUsernameAndPassword(
-      {required String username, required String password}) {
-    // TODO: implement registerWithUsernameAndPassword
-    throw UnimplementedError();
+  Future<UserCredential?> registerWithUsernameAndPassword({
+    required String username,
+    required String password,
+  }) async {
+    try {
+      final userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: username,
+        password: password,
+      );
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      print('Failed to register user: $e');
+      return null;
+    }
   }
 }

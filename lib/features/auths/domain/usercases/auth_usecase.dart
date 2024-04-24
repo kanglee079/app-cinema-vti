@@ -1,17 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-abstract class LoginRepository {
-  Future<UserCredential?> loginWithUsernameAndPassword({
+abstract class AuthUsecase {
+  Future<User?> loginWithUsernameAndPassword({
     required String username,
     required String password,
   });
 
-  Future<UserCredential?> registerWithUsernameAndPassword({
+  Future<User?> registerWithUsernameAndPassword({
     required String username,
     required String password,
   });
 
   Future<UserCredential?> loginWithGoogle();
 
-  Future<UserCredential?> loginWithFacebook();
+  Future<User?> loginWithFacebook();
 }

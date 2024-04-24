@@ -1,9 +1,10 @@
+import 'package:app_cinema/features/auths/presentation/auth_route.dart';
+import 'package:app_cinema/features/auths/presentation/bloc/auth_bloc.dart';
+import 'package:app_cinema/features/auths/presentation/views/login_page.dart';
+import 'package:app_cinema/features/auths/presentation/views/register_page.dart';
 import 'package:app_cinema/features/home/presentation/bloc/home_bloc.dart';
 import 'package:app_cinema/features/home/presentation/home_route.dart';
 import 'package:app_cinema/features/home/presentation/views/home_page.dart';
-import 'package:app_cinema/features/login/presentation/bloc/login_bloc.dart';
-import 'package:app_cinema/features/login/presentation/login_route.dart';
-import 'package:app_cinema/features/login/presentation/views/login_page.dart';
 import 'package:app_cinema/features/movie_detail/presentation/bloc/movie_detail_bloc.dart';
 import 'package:app_cinema/features/movie_detail/presentation/movie_detail_route.dart';
 import 'package:app_cinema/features/movie_detail/presentation/views/movie_detail_screen.dart';
@@ -26,12 +27,22 @@ class RouteGenerator {
             );
           },
         );
-      case LoginRoute.routeName:
+      case AuthRoute.loginRouteName:
         return MaterialPageRoute(
           builder: (context) {
-            return BlocProvider<LoginBloc>(
-              create: (context) => LoginBloc(),
+            return BlocProvider<AuthBloc>(
+              create: (context) => AuthBloc(),
               child: const LoginPage(),
+            );
+          },
+        );
+
+      case AuthRoute.registerRouteName:
+        return MaterialPageRoute(
+          builder: (context) {
+            return BlocProvider<AuthBloc>(
+              create: (context) => AuthBloc(),
+              child: const RegisterPage(),
             );
           },
         );

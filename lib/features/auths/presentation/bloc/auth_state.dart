@@ -1,14 +1,14 @@
-abstract class LoginState {}
+abstract class AuthState {}
 
-class InitialLoginState extends LoginState {}
+class InitialLoginState extends AuthState {}
 
-class SuccessLoginState extends LoginState {
+class SuccessLoginState extends AuthState {
   final String message;
 
   SuccessLoginState({required this.message});
 }
 
-class FailedLoginState extends LoginState {
+class FailedLoginState extends AuthState {
   final String message;
   final bool isFailedUsername;
   final bool isFailedPassword;
@@ -20,7 +20,7 @@ class FailedLoginState extends LoginState {
   });
 }
 
-class LoadingLoginState extends LoginState {
+class LoadingLoginState extends AuthState {
   final String message;
 
   LoadingLoginState({this.message = 'Loading...'});

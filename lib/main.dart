@@ -4,6 +4,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
+import 'core/common/userPreferences/user_preferences.dart';
+import 'features/auths/presentation/auth_route.dart';
+import 'features/home/presentation/home_route.dart';
 import 'firebase_options.dart';
 
 DioClient dioClient = DioClient();
@@ -15,7 +18,14 @@ Future<void> main(List<String> args) async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   dioClient.initDio();
-  runApp(const MyApp());
+  await UserPreferences.initialize();
+  String? token = UserPreferences.getToken();
+  runApp(
+    MyApp(
+      initialRoute:
+          token == null ? AuthRoute.loginRouteName : HomeRoute.routeName,
+    ),
+  );
   EasyLoading.instance
     ..userInteractions = false
     ..dismissOnTap = false;

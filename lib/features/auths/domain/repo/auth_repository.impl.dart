@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../data/datasource/auth_remote_datasource.dart';
 import '../../data/datasource/auth_remote_datasource.impl.dart';
-import 'login_repository.dart';
+import 'auth_repository.dart';
 
-class LoginRepositoryImpl extends LoginRepository {
+class AuthRepositoryImpl extends AuthRepository {
   final AuthRemoteDataSource _authRemoteDataSource = AuthRemoteDataSourceImpl();
 
   @override
@@ -30,7 +30,9 @@ class LoginRepositoryImpl extends LoginRepository {
   @override
   Future<UserCredential?> registerWithUsernameAndPassword(
       {required String username, required String password}) {
-    // TODO: implement registerWithUsernameAndPassword
-    throw UnimplementedError();
+    return _authRemoteDataSource.registerWithUsernameAndPassword(
+      username: username,
+      password: password,
+    );
   }
 }
