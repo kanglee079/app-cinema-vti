@@ -1,6 +1,7 @@
 // profile_state.dart
 
 import '../../../auths/domain/entities/user_entity.dart';
+import '../../../ticket/data/models/ticket_model.dart';
 
 abstract class ProfileState {}
 
@@ -46,4 +47,10 @@ class ProfileImageUpdateFailure extends ProfileState {
   final String error;
 
   ProfileImageUpdateFailure(this.error);
+}
+
+class UserTicketsLoaded extends ProfileState {
+  final List<TicketModel?> tickets;
+
+  UserTicketsLoaded(this.tickets);
 }

@@ -18,11 +18,15 @@ class MovieDetail {
   String? releaseDate;
   double? runtime;
   double? revenue;
+  @JsonKey(name: 'poster_path')
+  String? posterPath;
   String? title;
   @JsonKey(name: 'vote_average')
   double? voteAverage;
   @JsonKey(name: 'vote_count')
   int? voteCount;
+  String get posterUrl =>
+      'https://image.tmdb.org/t/p/original/${posterPath ?? ' '}';
   MovieDetail({
     this.id,
     this.budget,
@@ -32,6 +36,7 @@ class MovieDetail {
     this.releaseDate,
     this.runtime,
     this.revenue,
+    this.posterPath,
     this.title,
     this.voteAverage,
     this.voteCount,

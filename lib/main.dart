@@ -31,5 +31,10 @@ Future<void> main(List<String> args) async {
     ..dismissOnTap = false
     ..displayDuration = const Duration(milliseconds: 2000)
     ..indicatorType = EasyLoadingIndicatorType.fadingCircle
-    ..loadingStyle = EasyLoadingStyle.custom;
+    ..loadingStyle = EasyLoadingStyle.custom
+    ..backgroundColor = Colors.black
+    ..indicatorSize = 45.0
+    ..textColor = Colors.white
+    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..indicatorColor = Colors.white;
 }

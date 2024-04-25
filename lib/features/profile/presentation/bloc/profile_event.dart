@@ -20,3 +20,5 @@ class UpdateUserProfileImage extends ProfileEvent {
 
   UpdateUserProfileImage(this.user, this.imageFile);
 }
+
+class GetUserTickets extends ProfileEvent {}

@@ -6,6 +6,7 @@ import 'package:app_cinema/widgets/touch_dismiss_keyboard_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../apps/config/conf_colors.dart';
 import '../../../../widgets/date_picker_widget.dart';
@@ -16,6 +17,7 @@ import '../../../auths/domain/entities/user_entity.dart';
 import '../bloc/profile_bloc.dart';
 import '../bloc/profile_event.dart';
 import '../bloc/profile_state.dart';
+import 'screens/ticket_detail_screen.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -46,6 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
     fullNameController.addListener(_checkForChanges);
     phoneNumberController.addListener(_checkForChanges);
     emailController.addListener(_checkForChanges);
+    BlocProvider.of<ProfileBloc>(context).add(GetUserTickets());
   }
 
   void _checkForChanges() {
@@ -180,6 +183,16 @@ class _ProfilePageState extends State<ProfilePage> {
         if (state is ProfileLoading || state is ProfileUpdateInProgress) {
           return const Center(child: CircularProgressIndicator());
         }
+        if (state is ProfileError || state is ProfileUpdateFailure) {
+          return Center(
+            child: Text(
+              state is ProfileError
+                  ? 'An error occurred while loading the profile.'
+                  : 'An error occurred while updating the profile.',
+            ),
+          );
+        }
+
         return _buildProfileForm(context, state);
       },
     );
@@ -435,6 +448,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
                         const SizedBox(height: 50),
+                        ticketHistorySection(state),
                       ],
                     ),
                   ],
@@ -445,6 +459,117 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     );
+  }
+
+  Widget ticketHistorySection(ProfileState state) {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
+    final ColorScheme colorScheme = themeData.colorScheme;
+
+    if (state is UserTicketsLoaded && state.tickets.isNotEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Payments history',
+            style: textTheme.titleMedium?.copyWith(
+              color: colorScheme.primaryContainer,
+            ),
+          ),
+          const SizedBox(height: 10),
+          ...state.tickets.map((ticket) {
+            if (ticket != null) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TicketDetailScreenInProfile(
+                          ticket: ticket.convertToEntity()),
+                    ),
+                  );
+                },
+                child: Card(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: IntrinsicHeight(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Poster
+                          ticket.posterUrl != null
+                              ? Container(
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Image.network(
+                                    ticket.posterUrl!,
+                                    width: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Image.network(
+                                  "https://motivatevalmorgan.com/wp-content/uploads/2016/06/default-movie.jpg",
+                                  width: 60,
+                                  fit: BoxFit.cover,
+                                ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    ticket.title ?? 'Phim Không Xác Định',
+                                    style: textTheme.titleMedium,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    DateFormat('dd MMMM yyyy, HH:mm').format(
+                                        ticket.sessionDateTime ??
+                                            DateTime.now()),
+                                    style: textTheme.bodySmall,
+                                  ),
+                                  Text(
+                                    ticket.theaterName ?? 'Rạp không xác định',
+                                    style: textTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+        ],
+      );
+    } else if (state is UserTicketsLoaded && state.tickets.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        child: Text(
+          'No payment history.',
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onBackground.withOpacity(0.6),
+          ),
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 
   void _showLogoutDialog() {

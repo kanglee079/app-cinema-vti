@@ -4,11 +4,11 @@ import 'package:app_cinema/core/utils/string_utils.dart';
 import 'package:app_cinema/features/movie_detail/data/models/session_model.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/utils/app_function.dart';
-import '../../../../widgets/custom_button.dart';
-import '../../../movie_detail/domain/entities/movie_detail_entity.dart';
-import '../../domain/entities/seat_theater_entity.dart';
-import '../../domain/entities/ticket_entity.dart';
+import '../../../../../core/utils/app_function.dart';
+import '../../../../../widgets/custom_button.dart';
+import '../../../../movie_detail/domain/entities/movie_detail_entity.dart';
+import '../../../domain/entities/seat_theater_entity.dart';
+import '../../../domain/entities/ticket_entity.dart';
 
 class SeatMapWidget extends StatefulWidget {
   MovieDetailEntity? movieDetail;
@@ -156,7 +156,7 @@ class _SeatMapWidgetState extends State<SeatMapWidget> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 child: Text(
-                  'Danh sách ghế đã chọn: ${selectedSeat.map((e) => e.position).join(', ')}',
+                  'List of selected seats: ${selectedSeat.map((e) => e.position).join(', ')}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -164,26 +164,29 @@ class _SeatMapWidgetState extends State<SeatMapWidget> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 child: Text(
-                  'Tổng tiền: ${selectedSeat.length} x ${100000.addCommas().addUnitPost('đ')} = ${(selectedSeat.length * 100000).addCommas().addUnitPost('đ')}',
+                  'Total: ${selectedSeat.length} x ${100000.addCommas().addUnitPost('đ')} = ${(selectedSeat.length * 100000).addCommas().addUnitPost('đ')}',
                 ),
               ),
               const SizedBox(
                 height: 16,
               ),
-              CustomizedButton(
-                onTap: () {
-                  widget.onBookTicket(
-                    TicketEntity(
-                      movie: widget.movieDetail,
-                      session: widget.session,
-                      seats: selectedSeat.map((e) => e.position).toList(),
-                      totalAmount: selectedSeat.length * 100000,
-                    ),
-                  );
-                },
-                text: 'Đặt ${selectedSeat.length} vé',
-                backgroundColor: _colorScheme.primary,
-              ),
+              if (selectedSeat.isNotEmpty)
+                CustomizedButton(
+                  onTap: () {
+                    widget.onBookTicket(
+                      TicketEntity(
+                        movie: widget.movieDetail,
+                        session: widget.session,
+                        seats: selectedSeat.map((e) => e.position).toList(),
+                        totalAmount: selectedSeat.length * 100000,
+                        sessionDateTime:
+                            widget.session?.sessionTime ?? DateTime.now(),
+                      ),
+                    );
+                  },
+                  text: 'Selected ${selectedSeat.length} tickets',
+                  backgroundColor: _colorScheme.primary,
+                ),
             ],
           ),
         ),

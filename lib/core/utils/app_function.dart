@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import '../../features/ticket/domain/entities/seat_theater_entity.dart';
+
 List<SeatTheaterEntity> generateSeatTheater() {
   final result = <SeatTheaterEntity>[];
   for (var i = 0; i < 12; i++) {

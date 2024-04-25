@@ -29,7 +29,45 @@ class MovieSession {
     this.vipTicketPrice,
   });
 
-  // TODO: From Json, to JSON
+  factory MovieSession.fromJson(Map<String, dynamic> json) {
+    return MovieSession(
+      sessionTime: json['session_time'] == null
+          ? null
+          : DateTime.parse(json['session_time'] as String),
+      filmFormat: json['film_format'] as String?,
+      theaterName: json['theater_name'] as String?,
+      adultTicketPrice: (json['adult_ticket_price'] as num?)?.toDouble(),
+      childTicketPrice: (json['child_ticket_price'] as num?)?.toDouble(),
+      studentTicketPrice: (json['student_ticket_price'] as num?)?.toDouble(),
+      vipTicketPrice: (json['vip_ticket_price'] as num?)?.toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'session_time': sessionTime?.toIso8601String(),
+      'film_format': filmFormat,
+      'theater_name': theaterName,
+      'adult_ticket_price': adultTicketPrice,
+      'child_ticket_price': childTicketPrice,
+      'student_ticket_price': studentTicketPrice,
+      'vip_ticket_price': vipTicketPrice,
+    };
+  }
+
+  factory MovieSession.fromMap(Map<String, dynamic> map) {
+    return MovieSession(
+      sessionTime: map['session_time'] == null
+          ? null
+          : DateTime.parse(map['session_time'] as String),
+      filmFormat: map['film_format'] as String?,
+      theaterName: map['theater_name'] as String?,
+      adultTicketPrice: (map['adult_ticket_price'] as num?)?.toDouble(),
+      childTicketPrice: (map['child_ticket_price'] as num?)?.toDouble(),
+      studentTicketPrice: (map['student_ticket_price'] as num?)?.toDouble(),
+      vipTicketPrice: (map['vip_ticket_price'] as num?)?.toDouble(),
+    );
+  }
 
   MovieSessionEntity convertToEntity() {
     return MovieSessionEntity(

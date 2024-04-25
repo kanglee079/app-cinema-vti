@@ -51,7 +51,7 @@ class MovieDetailRepositoryImplement extends MovieDetailRepository {
           ),
           theaterName: theaterConstanst.first,
           filmFormat: filmFormatConstants.first,
-          adultTicketPrice: refPrice,
+          adultTicketPrice: refPrice.toDouble(),
           childTicketPrice: refPrice * 0.5,
           studentTicketPrice: refPrice * 0.7,
           vipTicketPrice: refPrice * 0.8,

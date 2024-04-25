@@ -39,7 +39,7 @@ class MovieDetailUsecasesImplement extends MovieDetailUsecases {
           .toList(),
       youtubeName: officialTrailer?.name,
       youtubeUrl: officialTrailer?.key,
-// posterUrl,
+      posterUrl: movieModel.posterUrl,
     );
     return result;
   }

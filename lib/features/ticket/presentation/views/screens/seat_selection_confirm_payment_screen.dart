@@ -6,15 +6,19 @@ import '../../../../../core/utils/date_utils.dart';
 import '../../../../../core/utils/int_utils.dart';
 import '../../../../../core/utils/string_utils.dart';
 import '../../../../../widgets/custom_button.dart';
+import '../../../../ticket_detail/presentation/views/ticket_detail_screen.dart';
 import '../../../domain/entities/ticket_entity.dart';
+import '../../bloc/seat_selection_bloc.dart';
 
 // ignore: must_be_immutable
 class SeatSelectionPaymentConfirmScreen extends StatefulWidget {
   final TicketEntity ticketEntity;
+  final TicketBloc ticketBloc;
   final Function(TicketEntity) onConfirm;
   const SeatSelectionPaymentConfirmScreen({
     super.key,
     required this.ticketEntity,
+    required this.ticketBloc,
     required this.onConfirm,
   });
 
@@ -26,14 +30,15 @@ class SeatSelectionPaymentConfirmScreen extends StatefulWidget {
 class _SeatSelectionPaymentConfirmScreenState
     extends State<SeatSelectionPaymentConfirmScreen> {
   late ThemeData theme;
+  bool _isLoading = false;
 
   TextTheme get _textTheme => theme.textTheme;
   ColorScheme get _colorScheme => theme.colorScheme;
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -111,10 +116,10 @@ class _SeatSelectionPaymentConfirmScreenState
                               '',
                         ),
                         _buildRowItem(
-                          title: 'Thời lượng',
+                          title: 'Time',
                           value: widget.ticketEntity.movie?.runtime
                                   ?.toStringAsFixed(0)
-                                  .addUnitPost('phút') ??
+                                  .addUnitPost('minutes') ??
                               '',
                         ),
                         _buildRowItem(
@@ -132,16 +137,16 @@ class _SeatSelectionPaymentConfirmScreenState
                           height: 8,
                         ),
                         _buildRowItem(
-                          title: 'Số lượng vé',
+                          title: 'Seats count',
                           value: widget.ticketEntity.seats?.length.toString() ??
                               '0',
                         ),
                         _buildRowItem(
-                          title: 'Đơn giá',
+                          title: 'Price per seat',
                           value: 100000.addCommas().addUnitPost('đ'),
                         ),
                         _buildRowItem(
-                          title: 'Tổng tiền',
+                          title: 'Total',
                           value: widget.ticketEntity.totalAmount
                                   ?.toInt()
                                   .addCommas()
@@ -163,14 +168,9 @@ class _SeatSelectionPaymentConfirmScreenState
                     ),
                     child: CustomizedButton(
                       onTap: () {
-                        final finalTicket = widget.ticketEntity.copyWith(
-                          id: const Uuid().v1(),
-                          createdAt: DateTime.now(),
-                          userId: FirebaseAuth.instance.currentUser?.uid,
-                        );
-                        widget.onConfirm(finalTicket);
+                        _confirmTicket();
                       },
-                      text: 'Xác nhận',
+                      text: 'Confirm',
                       backgroundColor: _colorScheme.primary,
                     ),
                   ),
@@ -204,6 +204,31 @@ class _SeatSelectionPaymentConfirmScreenState
           ),
         ],
       ),
+    );
+  }
+
+  void _confirmTicket() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final finalTicket = widget.ticketEntity.copyWith(
+      id: const Uuid().v1(),
+      createdAt: DateTime.now(),
+      userId: FirebaseAuth.instance.currentUser?.uid,
+    );
+    widget.onConfirm(finalTicket);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TicketDetailScreen(ticket: finalTicket),
+      ),
+      (Route<dynamic> route) => false,
     );
   }
 }

@@ -5,11 +5,12 @@ import 'package:app_cinema/features/movie_detail/presentation/bloc/movie_detail_
 import 'package:app_cinema/features/movie_detail/presentation/bloc/movie_detail_state.dart';
 import 'package:app_cinema/features/movie_detail/presentation/views/widgets/calender_session_item.dart';
 import 'package:app_cinema/features/movie_detail/presentation/views/widgets/sort_session_item.dart';
-import 'package:app_cinema/features/ticket/domain/entities/ticket_entity.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../ticket/presentation/ticket_route.dart';
+import '../../../../ticket/presentation/views/seat_selection_screen.dart';
 import '../widgets/by_cinema_item.dart';
 
 class SessionTab extends StatefulWidget {
@@ -95,21 +96,20 @@ class _SessionTabState extends State<SessionTab> {
                   return GestureDetector(
                     onTap: () {
                       final movieDetail = state.movieDetail;
+                      if (movieDetail == null) {
+                        return;
+                      }
                       final selectedSession = sessions[index];
-                      final entity = TicketEntity(
-                        // title: movieDetail?.title,
-                        // runTime: movieDetail?.runtime,
-                        // filmFormat: selectedSession.filmFormat,
-                        // theater: selectedSession.theater,
-                        // time: selectedSession.sessionTime,
-                        seats: ['F4', 'F5'],
-                        // unitPrice: selectedSession.adultPrice,
+                      final sessionModel = selectedSession.toMovieSession();
+                      final args = SeatSelectionScreenArg(
+                        sessionModel: sessionModel,
+                        movieDetailEntity: movieDetail,
                       );
-                      // Navigator.pushNamed(
-                      //   context,
-                      //   NewTicketRoute.routeName,
-                      //   arguments: entity,
-                      // );
+                      Navigator.pushNamed(
+                        context,
+                        SeatSelectionRoute.routeName,
+                        arguments: args,
+                      );
                     },
                     child: Container(
                       color: _colorScheme.background,

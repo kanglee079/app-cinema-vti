@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-import '../../../../core/common/model/bloc_status_state.dart';
 import '../../../movie_detail/data/models/session_model.dart';
 import '../../../movie_detail/domain/entities/movie_detail_entity.dart';
 import '../../domain/entities/ticket_entity.dart';
@@ -14,11 +13,11 @@ import '../bloc/seat_selection_state.dart';
 import 'screens/seat_selection_confirm_payment_screen.dart';
 import 'widget/seat_map_widget.dart';
 
-part 'seat_selection_screen.action.dart';
+// part 'seat_selection_screen.action.dart';
 
 class SeatSelectionScreenArg {
-  MovieSession sessionModel;
-  MovieDetailEntity movieDetailEntity;
+  final MovieSession sessionModel;
+  final MovieDetailEntity movieDetailEntity;
   SeatSelectionScreenArg({
     required this.sessionModel,
     required this.movieDetailEntity,
@@ -41,18 +40,14 @@ class SeatSelectionScreen extends StatefulWidget {
 }
 
 class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
-  late ThemeData theme;
   late TextTheme _textTheme;
   late ColorScheme _colorScheme;
 
   @override
   void initState() {
     super.initState();
-    theme = Theme.of(context);
-    _textTheme = theme.textTheme;
-    _colorScheme = theme.colorScheme;
     EasyLoading.addStatusCallback((status) {
-      if (status == EasyLoadingStatus.dismiss) {
+      if (status == EasyLoadingStatus.dismiss && mounted) {
         Navigator.pop(context);
       }
     });
@@ -66,12 +61,25 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    _textTheme = theme.textTheme;
+    _colorScheme = theme.colorScheme;
     return BlocConsumer<TicketBloc, TicketState>(
       listener: (context, state) {
-        if (state is TicketOperationSuccess) {
-          EasyLoading.showSuccess('Ticket booked successfully!');
+        if (state is TicketsLoading) {
+          EasyLoading.show(status: 'Loading...');
+        } else if (state is TicketOperationSuccess) {
+          EasyLoading.showSuccess('Operation successful!').then((_) {
+            if (mounted) Navigator.pop(context);
+          });
         } else if (state is TicketOperationFailure) {
-          EasyLoading.showError(state.error);
+          if (mounted) {
+            EasyLoading.showError(state.error);
+          }
+        } else {
+          if (mounted) {
+            EasyLoading.dismiss();
+          }
         }
       },
       builder: (context, state) {
@@ -85,6 +93,7 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
 
   AppBar _buildAppBar() {
     return AppBar(
+      // titleSpacing: 50,
       title: Column(
         children: [
           Text(
@@ -175,15 +184,18 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   }
 
   void _onBookTicket(TicketEntity ticket) {
+    final TicketBloc ticketBloc = BlocProvider.of<TicketBloc>(context);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (context) {
+      builder: (bottomSheetContext) {
         return SeatSelectionPaymentConfirmScreen(
           ticketEntity: ticket,
+          ticketBloc: ticketBloc,
           onConfirm: (finalTicket) {
-            BlocProvider.of<TicketBloc>(context).add(
+            ticketBloc.add(
               CreateTicketEvent(
                 userId: finalTicket.userId!,
                 ticket: finalTicket,

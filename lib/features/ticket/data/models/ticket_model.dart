@@ -16,6 +16,7 @@ class TicketModel {
   double? totalAmount;
   DateTime? createdAt;
   String? userId;
+  DateTime? sessionDateTime;
   TicketModel({
     this.id,
     this.title,
@@ -27,6 +28,7 @@ class TicketModel {
     this.totalAmount,
     this.createdAt,
     this.userId,
+    this.sessionDateTime,
   });
 
   factory TicketModel.fromJson(Map<String, dynamic> json) {
@@ -42,6 +44,8 @@ class TicketModel {
       amountPerSeat: json['amount_per_seat'] as double?,
       totalAmount: json['total_amount'] as double?,
       createdAt: DateTime.tryParse(json['created_at']),
+      sessionDateTime:
+          DateTime.tryParse(json['session_date_time'] as String? ?? ''),
       userId: json['user_id'] as String?,
     );
   }
@@ -57,6 +61,7 @@ class TicketModel {
       'amount_per_seat': amountPerSeat,
       'total_amount': totalAmount,
       'created_at': createdAt?.toIso8601String(),
+      'session_date_time': sessionDateTime?.toIso8601String(),
       'user_id': userId,
     };
   }
@@ -76,6 +81,7 @@ class TicketModel {
       seats: seats,
       totalAmount: totalAmount,
       createdAt: createdAt,
+      sessionDateTime: sessionDateTime,
       userId: userId,
     );
   }
@@ -90,8 +96,29 @@ class TicketModel {
       amountPerSeat: entity.session?.adultTicketPrice,
       totalAmount: entity.totalAmount,
       createdAt: entity.createdAt,
+      sessionDateTime: entity.sessionDateTime,
       userId: entity.userId,
-      posterUrl: entity.movie?.posterUrl,
+      posterUrl: entity.movie?.posterUrl ?? "chưa thấy",
+    );
+  }
+
+  // fromMap
+  factory TicketModel.fromMap(Map<String, dynamic> map) {
+    return TicketModel(
+      id: map['id'] as String?,
+      title: map['title'] as String?,
+      theaterName: map['theater_name'] as String?,
+      posterUrl: map['poster_url'] as String?,
+      runTime: map['run_time'] as double?,
+      seats: (jsonDecode(map['seats'] as String? ?? '[]') as List)
+          .map((e) => e as String)
+          .toList(),
+      amountPerSeat: map['amount_per_seat'] as double?,
+      totalAmount: map['total_amount'] as double?,
+      createdAt: DateTime.tryParse(map['created_at'] as String? ?? ''),
+      sessionDateTime:
+          DateTime.tryParse(map['session_date_time'] as String? ?? ''),
+      userId: map['user_id'] as String?,
     );
   }
 }

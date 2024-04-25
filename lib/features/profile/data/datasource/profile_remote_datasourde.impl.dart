@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+import '../../../ticket/data/models/ticket_model.dart';
+
 class ProfileRemoteDataSourceImpl extends ProfileRemoteDataSource {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -64,6 +66,29 @@ class ProfileRemoteDataSourceImpl extends ProfileRemoteDataSource {
 
       // Return updated user with new image URL
       return user.copyWith(avatarUrl: imageUrl);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<TicketModel?>> getUserTickets() async {
+    try {
+      final uid = auth.currentUser?.uid;
+      if (uid == null) throw Exception("No user id found");
+
+      final querySnapshot = await firestore
+          .collection('users')
+          .doc(uid)
+          .collection('tickets')
+          .get();
+
+      final List<TicketModel?> ticketList = querySnapshot.docs
+          .map((doc) => TicketModel.fromMap(doc.data()))
+          .toList();
+
+      return ticketList;
     } catch (e) {
       print(e);
       rethrow;

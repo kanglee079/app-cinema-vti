@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Image.asset("assets/icon/Location.png"),
             Text(
-              "Nur-Sultan",
+              "Ho Chi Minh city",
               style: themeData.textTheme.titleMedium?.copyWith(),
             ),
           ],

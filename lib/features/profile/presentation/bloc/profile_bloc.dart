@@ -13,6 +13,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<LoadUserProfile>(_onLoadUserProfile);
     on<UpdateUserProfile>(_onUpdateUserProfile);
     on<UpdateUserProfileImage>(_onUpdateUserProfileImage);
+    on<GetUserTickets>(_onGetUserTickets);
   }
 
   Future<void> _onLoadUserProfile(
@@ -58,6 +59,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(ProfileImageUpdateFailure(
           'An error occurred while updating the profile image.'));
       print(e.toString());
+    }
+  }
+
+  Future<void> _onGetUserTickets(
+    GetUserTickets event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(ProfileLoading());
+    try {
+      final tickets = await profileUsecase.getUserTickets();
+      emit(UserTicketsLoaded(tickets));
+    } catch (e) {
+      emit(ProfileError('An error occurred while loading user tickets.'));
     }
   }
 }
