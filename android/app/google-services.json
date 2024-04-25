@@ -7,6 +7,42 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:161659151125:android:788da575f2613ecaffff1c",
+        "android_client_info": {
+          "package_name": "com.example.app_cineme_new"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "161659151125-2l8veq7ff9ffbrqiuda8blaknakl12q4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfsdqZx8EVZtzVSsKLgZp5T8wo22-exlM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "161659151125-2l8veq7ff9ffbrqiuda8blaknakl12q4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "161659151125-02r83o6jqs2da558q4cgihsvbcdjtsms.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.appCinema"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:161659151125:android:f1a3b7ed91adb295ffff1c",
         "android_client_info": {
           "package_name": "com.xikang.appcinema"
@@ -19,6 +55,14 @@
           "android_info": {
             "package_name": "com.xikang.appcinema",
             "certificate_hash": "68c38e98c7ca6e682d1a989485499e64a25f4b4b"
+          }
+        },
+        {
+          "client_id": "161659151125-ut4evcflsevch0kmanvq7urqm1i62o16.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xikang.appcinema",
+            "certificate_hash": "17231ed033cf36b31677611081a5cdaf80e7e4ef"
           }
         },
         {

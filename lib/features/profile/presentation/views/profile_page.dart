@@ -172,6 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
           );
           _isDataChanged.value = false;
           currentUser = state.updatedUser;
+          BlocProvider.of<ProfileBloc>(context).add(GetUserTickets());
         }
         if (state is ProfileUpdateFailure) {
           ScaffoldMessenger.of(context).showSnackBar(

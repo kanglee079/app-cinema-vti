@@ -7,7 +7,8 @@ import 'seat_selection_state.dart';
 class TicketBloc extends Bloc<TicketEvent, TicketState> {
   final SeatSelectionUsecase seatSelectionUsecase;
 
-  TicketBloc({required this.seatSelectionUsecase}) : super(TicketsInitial()) {
+  TicketBloc({required this.seatSelectionUsecase})
+      : super(TicketsInitial(timeStamp: DateTime.now())) {
     on<LoadTicketsEvent>(_onLoadTickets);
     on<CreateTicketEvent>(_onCreateTicket);
     on<UpdateTicketEvent>(_onUpdateTicket);
@@ -30,7 +31,7 @@ class TicketBloc extends Bloc<TicketEvent, TicketState> {
     try {
       await seatSelectionUsecase.createTicket(
           userId: event.userId, ticket: event.ticket);
-      emit(TicketOperationSuccess());
+      emit(TicketOperationSuccess(timeStamp: DateTime.now()));
     } catch (error) {
       emit(TicketOperationFailure(error: error.toString()));
     }
@@ -41,7 +42,7 @@ class TicketBloc extends Bloc<TicketEvent, TicketState> {
     try {
       await seatSelectionUsecase.updateTicket(
           userId: event.userId, ticket: event.ticket);
-      emit(TicketOperationSuccess());
+      emit(TicketOperationSuccess(timeStamp: DateTime.now()));
     } catch (error) {
       emit(TicketOperationFailure(error: error.toString()));
     }
@@ -52,7 +53,7 @@ class TicketBloc extends Bloc<TicketEvent, TicketState> {
     try {
       await seatSelectionUsecase.deleteTicket(
           userId: event.userId, ticketId: event.ticketId);
-      emit(TicketOperationSuccess());
+      emit(TicketOperationSuccess(timeStamp: DateTime.now()));
     } catch (error) {
       emit(TicketOperationFailure(error: error.toString()));
     }

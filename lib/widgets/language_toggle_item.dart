@@ -33,7 +33,7 @@ class _LanguageToggleState extends State<LanguageToggle> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Image.asset(
-                index == 0 ? 'assets/flags/vietnam.png' : 'assets/flags/uk.png',
+                index == 0 ? 'assets/flags/uk.png' : 'assets/flags/vietnam.png',
                 width: 40,
                 height: 24,
               ),

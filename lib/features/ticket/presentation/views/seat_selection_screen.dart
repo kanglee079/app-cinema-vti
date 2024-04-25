@@ -66,12 +66,14 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
     _colorScheme = theme.colorScheme;
     return BlocConsumer<TicketBloc, TicketState>(
       listener: (context, state) {
+        print(state);
         if (state is TicketsLoading) {
           EasyLoading.show(status: 'Loading...');
         } else if (state is TicketOperationSuccess) {
-          EasyLoading.showSuccess('Operation successful!').then((_) {
-            if (mounted) Navigator.pop(context);
-          });
+          // EasyLoading.showSuccess('Operation successful!').then((_) {
+          //   if (mounted) Navigator.pop(context);
+          // });
+          EasyLoading.showSuccess('Operation successful!');
         } else if (state is TicketOperationFailure) {
           if (mounted) {
             EasyLoading.showError(state.error);

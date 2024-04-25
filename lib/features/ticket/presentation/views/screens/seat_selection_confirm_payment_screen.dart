@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../../core/utils/date_utils.dart';
+import '../../../../../core/utils/dialog_custom.dart';
 import '../../../../../core/utils/int_utils.dart';
 import '../../../../../core/utils/string_utils.dart';
 import '../../../../../widgets/custom_button.dart';
@@ -168,7 +169,7 @@ class _SeatSelectionPaymentConfirmScreenState
                     ),
                     child: CustomizedButton(
                       onTap: () {
-                        _confirmTicket();
+                        _showConfirmationDialog();
                       },
                       text: 'Confirm',
                       backgroundColor: _colorScheme.primary,
@@ -207,6 +208,23 @@ class _SeatSelectionPaymentConfirmScreenState
     );
   }
 
+  void _showConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ConfirmationDialog(
+          onConfirm: () {
+            Navigator.of(context).pop();
+            _confirmTicket();
+          },
+          onCancel: () {
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
+
   void _confirmTicket() async {
     setState(() {
       _isLoading = true;
@@ -223,12 +241,12 @@ class _SeatSelectionPaymentConfirmScreenState
       _isLoading = false;
     });
 
-    Navigator.pushAndRemoveUntil(
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TicketDetailScreen(ticket: finalTicket),
       ),
-      (Route<dynamic> route) => false,
+      // (Route<dynamic> route) => false,
     );
   }
 }

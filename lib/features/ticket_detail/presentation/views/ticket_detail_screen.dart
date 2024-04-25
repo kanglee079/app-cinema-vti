@@ -59,20 +59,23 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             const SizedBox(height: 24),
             ticketDetails(),
             const SizedBox(height: 24),
-            CustomizeButton(
-              onTap: () {
-                // Handle your onTap here
-              },
-              text: 'Download Ticket',
-              backgroundColor: colorScheme.primary,
-            ),
-            CustomizeButton(
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    HomeRoute.routeName, (Route<dynamic> route) => false);
-              },
-              text: 'Return Home',
-              backgroundColor: colorScheme.secondary,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                CustomizeButton(
+                  onTap: () {},
+                  text: 'Download Ticket',
+                  backgroundColor: colorScheme.primary,
+                ),
+                CustomizeButton(
+                  onTap: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        HomeRoute.routeName, (Route<dynamic> route) => false);
+                  },
+                  text: 'Return Home',
+                  backgroundColor: colorScheme.primary,
+                ),
+              ],
             ),
           ],
         ),
