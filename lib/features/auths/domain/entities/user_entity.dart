@@ -19,6 +19,28 @@ class UserEntity {
     this.avatarUrl = '',
   });
 
+  UserEntity copyWith({
+    String? uid,
+    String? email,
+    String? fullName,
+    DateTime? dob,
+    String? phoneNumber,
+    String? gender,
+    String? city,
+    String? avatarUrl,
+  }) {
+    return UserEntity(
+      uid: uid ?? this.uid,
+      email: email ?? this.email,
+      fullName: fullName ?? this.fullName,
+      dob: dob ?? this.dob,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      gender: gender ?? this.gender,
+      city: city ?? this.city,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+    );
+  }
+
   factory UserEntity.fromFirebaseUser({
     required String uid,
     required String email,
@@ -53,5 +75,18 @@ class UserEntity {
       'avatarUrl': avatarUrl,
       'createdAt': DateTime.now().toIso8601String(),
     };
+  }
+
+  factory UserEntity.fromMap(Map<String, dynamic> map) {
+    return UserEntity(
+      uid: map['uid'] ?? '',
+      email: map['email'] ?? '',
+      fullName: map['fullName'] ?? '',
+      dob: map.containsKey('dob') ? DateTime.parse(map['dob']) : DateTime.now(),
+      phoneNumber: map['phoneNumber'] ?? '',
+      gender: map['gender'] ?? 'Other',
+      city: map['city'] ?? '',
+      avatarUrl: map['avatarUrl'] ?? '',
+    );
   }
 }

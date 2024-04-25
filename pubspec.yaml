@@ -59,6 +59,8 @@ dependencies:
   shimmer: ^3.0.0
   cloud_firestore: ^4.17.1
   shared_preferences: ^2.2.3
+  image_picker: ^1.1.0
+  firebase_storage: ^11.7.3
 
 dev_dependencies:
   flutter_test:

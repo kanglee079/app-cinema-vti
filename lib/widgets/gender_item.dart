@@ -7,9 +7,11 @@ enum Gender {
 }
 
 class GenderItem extends StatefulWidget {
+  final Gender initialGender;
   final Function(Gender) onGenderChanged;
   const GenderItem({
     super.key,
+    required this.initialGender,
     required this.onGenderChanged,
   });
 
@@ -23,7 +25,7 @@ class _GenderItemState extends State<GenderItem> {
   @override
   void initState() {
     super.initState();
-    selectedGender = Gender.Male;
+    selectedGender = widget.initialGender;
   }
 
   Color _getBorderColor(Gender gender) {
@@ -63,7 +65,7 @@ class _GenderItemState extends State<GenderItem> {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              width: 15,
+              width: 5,
               height: 15,
               child: Transform.scale(
                 scale: 0.8,

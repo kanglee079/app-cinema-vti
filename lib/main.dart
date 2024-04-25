@@ -28,5 +28,8 @@ Future<void> main(List<String> args) async {
   );
   EasyLoading.instance
     ..userInteractions = false
-    ..dismissOnTap = false;
+    ..dismissOnTap = false
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.custom;
 }

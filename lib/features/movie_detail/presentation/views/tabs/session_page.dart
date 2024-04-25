@@ -97,13 +97,13 @@ class _SessionTabState extends State<SessionTab> {
                       final movieDetail = state.movieDetail;
                       final selectedSession = sessions[index];
                       final entity = TicketEntity(
-                        title: movieDetail?.title,
-                        runTime: movieDetail?.runtime,
-                        filmFormat: selectedSession.filmFormat,
-                        theater: selectedSession.theater,
-                        time: selectedSession.sessionTime,
+                        // title: movieDetail?.title,
+                        // runTime: movieDetail?.runtime,
+                        // filmFormat: selectedSession.filmFormat,
+                        // theater: selectedSession.theater,
+                        // time: selectedSession.sessionTime,
                         seats: ['F4', 'F5'],
-                        unitPrice: selectedSession.adultPrice,
+                        // unitPrice: selectedSession.adultPrice,
                       );
                       // Navigator.pushNamed(
                       //   context,

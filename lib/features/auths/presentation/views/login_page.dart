@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
+import '../../../home/presentation/home_route.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -44,7 +45,8 @@ class _LoginPageState extends State<LoginPage> {
                     EasyLoading.show(status: state.message);
                   } else if (state is SuccessLoginState) {
                     EasyLoading.showSuccess(state.message).then((value) {
-                      Navigator.pushReplacementNamed(context, '/');
+                      Navigator.of(context)
+                          .pushReplacementNamed(HomeRoute.routeName);
                     });
                   } else if (state is FailedLoginState) {
                     EasyLoading.showError(state.message);

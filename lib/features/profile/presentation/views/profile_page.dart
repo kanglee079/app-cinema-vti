@@ -1,11 +1,21 @@
-import 'package:app_cinema/apps/config/conf_colors.dart';
-import 'package:app_cinema/widgets/date_picker_widget.dart';
-import 'package:app_cinema/widgets/language_toggle_item.dart';
+import 'dart:io';
+
+import 'package:app_cinema/core/common/userPreferences/user_preferences.dart';
+import 'package:app_cinema/features/auths/presentation/auth_route.dart';
 import 'package:app_cinema/widgets/touch_dismiss_keyboard_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../../apps/config/conf_colors.dart';
+import '../../../../widgets/date_picker_widget.dart';
 import '../../../../widgets/gender_item.dart';
 import '../../../../widgets/infor_item.dart';
+import '../../../../widgets/language_toggle_item.dart';
+import '../../../auths/domain/entities/user_entity.dart';
+import '../bloc/profile_bloc.dart';
+import '../bloc/profile_event.dart';
+import '../bloc/profile_state.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -15,13 +25,40 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late UserEntity currentUser;
   bool isReceiveNotification = false;
+  late String avatarUrl;
+  bool isLoadingAvatar = false;
   DateTime _selectedDate = DateTime.now();
   Gender _selectedGender = Gender.Male;
-  String dropdownValue = "Ho Chi Minh City";
+  late String dropdownValue;
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final ValueNotifier<bool> _isDataChanged = ValueNotifier(false);
+
+  @override
+  void initState() {
+    super.initState();
+    avatarUrl = 'assets/image/AppIcon.png';
+    dropdownValue = listCity.first;
+    BlocProvider.of<ProfileBloc>(context).add(LoadUserProfile());
+    fullNameController.addListener(_checkForChanges);
+    phoneNumberController.addListener(_checkForChanges);
+    emailController.addListener(_checkForChanges);
+  }
+
+  void _checkForChanges() {
+    bool hasChanged = fullNameController.text != currentUser.fullName ||
+        phoneNumberController.text != currentUser.phoneNumber ||
+        emailController.text != currentUser.email ||
+        _selectedDate != currentUser.dob ||
+        _selectedGender.toString().split('.').last.toLowerCase() !=
+            currentUser.gender.toLowerCase() ||
+        dropdownValue != currentUser.city ||
+        avatarUrl != currentUser.avatarUrl;
+    _isDataChanged.value = hasChanged;
+  }
 
   @override
   void dispose() {
@@ -31,31 +68,69 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final profileBloc = BlocProvider.of<ProfileBloc>(context);
+    profileBloc.stream.listen((state) {
+      if (state is ProfileLoaded) {
+        _updateTextControllers(state.user);
+      }
+    });
+  }
+
   // late ThemeData _themeData;
 
   void _handleDateChanged(DateTime date) {
     setState(() {
       _selectedDate = date;
+      _checkForChanges();
     });
   }
 
   void _handleGenderChanged(Gender gender) {
     setState(() {
       _selectedGender = gender;
+      _checkForChanges();
     });
   }
 
-  void saveProfile() {
-    DateTime selectedDate = DateTime.now();
-    String selectedGender = "Male";
+  void _updateTextControllers(UserEntity user) {
+    currentUser = user;
+    if (mounted) {
+      fullNameController.text = user.fullName;
+      emailController.text = user.email;
+      phoneNumberController.text = user.phoneNumber;
 
-    print("Full Name: ${fullNameController.text}");
-    print("Phone Number: ${phoneNumberController.text}");
-    print("Email: ${emailController.text}");
-    print(
-        "Date of Birth: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}");
-    print("Gender: $selectedGender");
-    print("City: $dropdownValue");
+      _selectedDate = user.dob;
+      _selectedGender = Gender.values.firstWhere(
+          (g) =>
+              g.toString().split('.').last.toLowerCase() ==
+              user.gender.toLowerCase(),
+          orElse: () => Gender.Other);
+
+      dropdownValue = listCity.contains(user.city) ? user.city : listCity.first;
+      avatarUrl = user.avatarUrl.isNotEmpty
+          ? user.avatarUrl
+          : 'assets/image/AppIcon.png';
+
+      _checkForChanges();
+    }
+  }
+
+  void saveProfile() {
+    final userToUpdate = UserEntity(
+      email: emailController.text,
+      fullName: fullNameController.text,
+      dob: _selectedDate,
+      phoneNumber: phoneNumberController.text,
+      gender: _selectedGender.toString().split('.').last,
+      city: dropdownValue,
+      avatarUrl: avatarUrl,
+      uid: currentUser.uid,
+    );
+
+    BlocProvider.of<ProfileBloc>(context).add(UpdateUserProfile(userToUpdate));
   }
 
   final List<String> listCity = <String>[
@@ -63,18 +138,60 @@ class _ProfilePageState extends State<ProfilePage> {
     "Hanoi",
     "Da Nang",
     "Can Tho",
-    "Hue"
+    "Hue",
+    "Unknown"
   ];
 
   @override
   Widget build(BuildContext context) {
+    return BlocConsumer<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is ProfileLoaded) {
+          _updateTextControllers(state.user);
+        }
+        if (state is ProfileImageUpdateInProgress) {
+          setState(() {
+            isLoadingAvatar = true;
+          });
+        } else if (state is ProfileImageUpdateSuccess ||
+            state is ProfileImageUpdateFailure) {
+          setState(() {
+            isLoadingAvatar = false;
+            if (state is ProfileImageUpdateSuccess) {
+              avatarUrl =
+                  state.imageUrl.isNotEmpty ? state.imageUrl : avatarUrl;
+            }
+          });
+        }
+        if (state is ProfileUpdateSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile Updated Successfully')),
+          );
+          _isDataChanged.value = false;
+          currentUser = state.updatedUser;
+        }
+        if (state is ProfileUpdateFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error)),
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is ProfileLoading || state is ProfileUpdateInProgress) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return _buildProfileForm(context, state);
+      },
+    );
+  }
+
+  Widget _buildProfileForm(BuildContext context, ProfileState state) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
     final ColorScheme colorScheme = themeData.colorScheme;
 
     return TouchOutsideToDismissKeyboard(
       child: Scaffold(
-        backgroundColor: ConfigColors().primaryColor,
         appBar: AppBar(
           backgroundColor: ConfigColors().appBarColor,
           leading: IconButton(
@@ -95,7 +212,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: _showLogoutDialog,
               icon: Icon(
                 Icons.logout,
                 color: themeData.colorScheme.primaryContainer,
@@ -104,174 +221,258 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(width: 10),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 15,
-            vertical: 30,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const CircleAvatar(
-                  radius: 45,
-                  backgroundImage: AssetImage('assets/image/AppIcon.png'),
+        body: ValueListenableBuilder<bool>(
+          valueListenable: _isDataChanged,
+          builder: (context, value, child) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 30,
                 ),
-                const SizedBox(height: 20),
-                Text(
-                  'Wayne Jackson',
-                  style: textTheme.titleLarge,
-                ),
-                const SizedBox(height: 30),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Information",
-                    style: textTheme.titleMedium?.copyWith(
-                      color: colorScheme.primaryContainer,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                Column(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    InfoRow(
-                      title: "Fullname",
-                      controller: fullNameController,
-                      titleStyle: textTheme.bodyMedium,
-                    ),
-                    InfoRow(
-                      isDeco: false,
-                      title: "Date of birth",
-                      titleStyle: textTheme.bodyMedium,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child:
-                            DatePickerWidget(onDateChanged: _handleDateChanged),
-                      ),
-                    ),
-                    InfoRow(
-                      title: "Phone number",
-                      titleStyle: textTheme.bodyMedium,
-                      isPhone: true,
-                      controller: phoneNumberController,
-                    ),
-                    InfoRow(
-                      title: "Email",
-                      controller: emailController,
-                      titleStyle: textTheme.bodyMedium,
-                    ),
-                    InfoRow(
-                      isDeco: false,
-                      title: "Gender",
-                      titleStyle: textTheme.bodyMedium,
-                      child: GenderItem(onGenderChanged: _handleGenderChanged),
-                    ),
-                    InfoRow(
-                      isDeco: false,
-                      title: "City",
-                      titleStyle: textTheme.bodyMedium,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          height: 40,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              width: 1,
-                              color: Colors.white.withOpacity(0.2),
-                            ),
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: dropdownValue,
-                              icon: const Icon(Icons.arrow_drop_down,
-                                  color: Colors.white),
-                              style: const TextStyle(color: Colors.white),
-                              dropdownColor: ConfigColors().primaryColor,
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  dropdownValue = newValue!;
-                                });
-                              },
-                              items: listCity.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
                     GestureDetector(
-                      onTap: () {
-                        saveProfile();
+                      onTap: () async {
+                        final picker = ImagePicker();
+                        final pickedFile =
+                            await picker.pickImage(source: ImageSource.gallery);
+                        if (pickedFile != null) {
+                          final imageFile = File(pickedFile.path);
+                          final profileBloc =
+                              BlocProvider.of<ProfileBloc>(context);
+                          setState(() {
+                            avatarUrl = imageFile.path;
+                          });
+                          profileBloc.add(
+                            UpdateUserProfileImage(
+                              currentUser.copyWith(avatarUrl: avatarUrl),
+                              imageFile,
+                            ),
+                          );
+                        }
                       },
-                      child: Container(
-                        width: 100,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: colorScheme.primary,
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            key: ValueKey(avatarUrl),
+                            radius: 45,
+                            backgroundImage: avatarUrl.contains('http')
+                                ? NetworkImage(avatarUrl)
+                                : FileImage(File(avatarUrl)) as ImageProvider,
+                            onBackgroundImageError: (_, __) => const AssetImage(
+                                'assets/image/default_avatar.png'),
+                          ),
+                          if (isLoadingAvatar)
+                            Positioned.fill(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.black45,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      fullNameController.text,
+                      style: textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 30),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Information",
+                        style: textTheme.titleMedium?.copyWith(
+                          color: colorScheme.primaryContainer,
                         ),
-                        child: Center(
-                          child: Text(
-                            "SAVE",
-                            style: textTheme.titleMedium,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Column(
+                      children: [
+                        InfoRow(
+                          title: "Fullname",
+                          controller: fullNameController,
+                          titleStyle: textTheme.bodyMedium,
+                        ),
+                        InfoRow(
+                          isDeco: false,
+                          title: "Date of birth",
+                          titleStyle: textTheme.bodyMedium,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: DatePickerWidget(
+                              onDateChanged: _handleDateChanged,
+                              initialDate: _selectedDate,
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Settings",
-                    style: textTheme.titleMedium?.copyWith(
-                      color: colorScheme.primaryContainer,
-                    ),
-                  ),
-                ),
-                Column(
-                  children: [
-                    InfoRow(
-                      title: "Language",
-                      titleStyle: textTheme.bodyMedium,
-                      isDeco: false,
-                      child: const LanguageToggle(),
-                    ),
-                    InfoRow(
-                      title: "Receive notification",
-                      titleStyle: textTheme.bodyMedium,
-                      isDeco: false,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Switch(
-                          value: isReceiveNotification,
-                          activeColor: Colors.orange,
-                          onChanged: (bool value) {
-                            setState(() {
-                              isReceiveNotification = value;
-                            });
-                          },
+                        InfoRow(
+                          title: "Phone number",
+                          titleStyle: textTheme.bodyMedium,
+                          isPhone: true,
+                          controller: phoneNumberController,
                         ),
-                      ),
+                        InfoRow(
+                          title: "Email",
+                          controller: emailController,
+                          titleStyle: textTheme.bodyMedium,
+                        ),
+                        InfoRow(
+                          isDeco: false,
+                          title: "Gender",
+                          titleStyle: textTheme.bodyMedium,
+                          child: GenderItem(
+                            onGenderChanged: _handleGenderChanged,
+                            initialGender: _selectedGender,
+                          ),
+                        ),
+                        InfoRow(
+                          isDeco: false,
+                          title: "City",
+                          titleStyle: textTheme.bodyMedium,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Container(
+                              height: 40,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  width: 1,
+                                  color: Colors.white.withOpacity(0.2),
+                                ),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: dropdownValue,
+                                  icon: const Icon(Icons.arrow_drop_down,
+                                      color: Colors.white),
+                                  style: const TextStyle(color: Colors.white),
+                                  dropdownColor: ConfigColors().primaryColor,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      dropdownValue = newValue!;
+                                      _checkForChanges();
+                                    });
+                                  },
+                                  items: listCity.map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        if (value)
+                          GestureDetector(
+                            onTap: saveProfile,
+                            child: Container(
+                              width: 100,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "SAVE",
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 20),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Settings",
+                            style: textTheme.titleMedium?.copyWith(
+                              color: colorScheme.primaryContainer,
+                            ),
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            InfoRow(
+                              title: "Language",
+                              titleStyle: textTheme.bodyMedium,
+                              isDeco: false,
+                              child: const LanguageToggle(),
+                            ),
+                            InfoRow(
+                              title: "Receive notification",
+                              titleStyle: textTheme.bodyMedium,
+                              isDeco: false,
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Switch(
+                                  value: isReceiveNotification,
+                                  activeColor: Colors.orange,
+                                  onChanged: (bool value) {
+                                    setState(() {
+                                      isReceiveNotification = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 50),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 50),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
+    );
+  }
+
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure to logout?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                UserPreferences.clearToken();
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    AuthRoute.loginRouteName, (Route<dynamic> route) => false);
+              },
+              child: const Text('Logout'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

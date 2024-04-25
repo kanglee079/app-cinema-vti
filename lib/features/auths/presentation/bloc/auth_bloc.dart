@@ -143,9 +143,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(FailedLoginState(message: 'Login failed with ${event.provider}'));
       }
     } catch (e) {
-      emit(FailedLoginState(
+      emit(
+        FailedLoginState(
           message:
-              'An error occurred while logging in with ${event.provider}: $e'));
+              'An error occurred while logging in with ${event.provider}: $e',
+        ),
+      );
+      print(e);
     }
   }
 

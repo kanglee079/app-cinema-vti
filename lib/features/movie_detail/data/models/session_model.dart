@@ -12,7 +12,7 @@ class MovieSession {
   @JsonKey(name: 'theater_name')
   String? theaterName;
   @JsonKey(name: 'adult_ticket_price')
-  int? adultTicketPrice;
+  double? adultTicketPrice;
   @JsonKey(name: 'child_ticket_price')
   double? childTicketPrice;
   @JsonKey(name: 'student_ticket_price')
@@ -33,7 +33,7 @@ class MovieSession {
 
   MovieSessionEntity convertToEntity() {
     return MovieSessionEntity(
-      sessionTime: sessionTime, // Lấy filed bên model gán cho entity
+      sessionTime: sessionTime,
       filmFormat: filmFormat,
       theater: theaterName,
       adultPrice: adultTicketPrice?.toDouble(),

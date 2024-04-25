@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage> {
             "Upcoming",
             style: themeData.textTheme.titleLarge?.copyWith(),
           ),
-          const SizedBox(height: 25),
+          const SizedBox(height: 20),
           buildCarouselSlider(movies, themeData),
           const SizedBox(height: 15),
           Center(
@@ -152,15 +152,15 @@ class _HomePageState extends State<HomePage> {
   CarouselSlider buildCarouselSlider(List<Movie> movies, ThemeData themeData) {
     return CarouselSlider(
       options: CarouselOptions(
-        height: 330,
-        viewportFraction: 0.65,
+        height: 300,
+        viewportFraction: 0.6,
         enableInfiniteScroll: true,
         autoPlay: true,
         autoPlayInterval: const Duration(seconds: 5),
         autoPlayAnimationDuration: const Duration(milliseconds: 800),
         autoPlayCurve: Curves.fastOutSlowIn,
         enlargeCenterPage: true,
-        enlargeFactor: 0.3,
+        enlargeFactor: 0.2,
         scrollDirection: Axis.horizontal,
         onPageChanged: (index, reason) {
           setState(() => _currentIndex = index);
