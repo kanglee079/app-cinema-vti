@@ -44,16 +44,6 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
   late ColorScheme _colorScheme;
 
   @override
-  void initState() {
-    super.initState();
-    EasyLoading.addStatusCallback((status) {
-      if (status == EasyLoadingStatus.dismiss && mounted) {
-        Navigator.pop(context);
-      }
-    });
-  }
-
-  @override
   void dispose() {
     EasyLoading.removeCallback;
     super.dispose();
@@ -70,9 +60,6 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
         if (state is TicketsLoading) {
           EasyLoading.show(status: 'Loading...');
         } else if (state is TicketOperationSuccess) {
-          // EasyLoading.showSuccess('Operation successful!').then((_) {
-          //   if (mounted) Navigator.pop(context);
-          // });
           EasyLoading.showSuccess('Operation successful!');
         } else if (state is TicketOperationFailure) {
           if (mounted) {

@@ -17,26 +17,25 @@ class AboutTab extends StatefulWidget {
 }
 
 class _AboutTabState extends State<AboutTab> {
-  late YoutubePlayerController _youtubeController;
+  YoutubePlayerController? _youtubeController;
 
   @override
   void initState() {
     super.initState();
-    _initializeYoutubeController();
+    if (widget.movieDetail?.youtubeUrl != null) {
+      _initializeYoutubeController();
+    }
   }
 
   @override
   void dispose() {
-    _youtubeController.pause();
-    Future.delayed(const Duration(milliseconds: 40))
-        .then((value) => _youtubeController.dispose());
+    _youtubeController?.dispose();
     super.dispose();
   }
 
   void _initializeYoutubeController() {
-    final videoId = widget.movieDetail?.youtubeUrl == null
-        ? ''
-        : YoutubePlayer.convertUrlToId(widget.movieDetail!.youtubeUrl!);
+    final videoId =
+        YoutubePlayer.convertUrlToId(widget.movieDetail!.youtubeUrl!);
     _youtubeController = YoutubePlayerController(
       initialVideoId: videoId ?? "",
       flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
@@ -47,16 +46,15 @@ class _AboutTabState extends State<AboutTab> {
   void didUpdateWidget(covariant AboutTab oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.movieDetail?.youtubeUrl != oldWidget.movieDetail?.youtubeUrl) {
-      _initializeYoutubeController();
+      _youtubeController?.dispose();
+      if (widget.movieDetail?.youtubeUrl != null) {
+        _initializeYoutubeController();
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-    final textTheme = themeData.textTheme;
-    final colorScheme = themeData.colorScheme;
-
     return BlocBuilder<MovieDetailBloc, MovieDetailState>(
       builder: (context, state) {
         final movieDetail = state.movieDetail ?? widget.movieDetail;
@@ -67,12 +65,14 @@ class _AboutTabState extends State<AboutTab> {
         return SingleChildScrollView(
           child: Column(
             children: [
-              if (movieDetail.youtubeUrl != null)
+              if (movieDetail.youtubeUrl != null && _youtubeController != null)
                 YoutubePlayer(
-                    controller: _youtubeController,
-                    showVideoProgressIndicator: true),
-              _buildRatingSection(movieDetail, colorScheme),
-              _buildMovieDetails(movieDetail, textTheme, colorScheme),
+                  controller: _youtubeController!,
+                  showVideoProgressIndicator: true,
+                ),
+              _buildRatingSection(movieDetail, Theme.of(context).colorScheme),
+              _buildMovieDetails(movieDetail, Theme.of(context).textTheme,
+                  Theme.of(context).colorScheme),
             ],
           ),
         );
@@ -145,6 +145,7 @@ class _AboutTabState extends State<AboutTab> {
       child: Container(
         padding: const EdgeInsets.all(16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(value ?? '',
                 style:
